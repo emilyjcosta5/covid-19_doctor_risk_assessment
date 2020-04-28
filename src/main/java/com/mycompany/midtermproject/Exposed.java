@@ -1,7 +1,5 @@
 /*
- * Author: Federico Manzo
- * Course: BTE324 
- * Midterm Exam
+ * Author: Emily Costa
  * This project takes an input file containing patients at a hospital
  * and outputs a file containing the patients that potentially have
  * COVID-19. The functions will rate the patients on their likelihood 
