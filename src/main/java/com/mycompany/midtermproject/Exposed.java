@@ -37,8 +37,7 @@ public class Exposed {
                 + "This program will output a file identifying "
                 + "COVID-19 risk ratings of doctors at your "
                 + "hospital based on patient and medical "
-                + "supply data, with risk sorted highest to "
-                + "lowest. \n"
+                + "supply data. \n"
                 + "The system already has the data for the "
                 + "doctors and their supplies. Please enter "
                 + "the patient data.");
@@ -51,11 +50,8 @@ public class Exposed {
         patients = setPatientVirusRatings(patients);
         doctors = setDoctorVirusRatings(doctors, patients);
         
-        // Sort risk ratings, highest to lowest.
-        // doctors = sortByRisk(doctors);
-        
         // Save doctors in output file.
-        // toFile();
+        toFile(doctors);
     }
     
     public static ArrayList<Doctor> createDoctorObjects() throws FileNotFoundException, IOException, ParseException{
@@ -68,7 +64,8 @@ public class Exposed {
         boolean mask, gloves;
         
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        BufferedReader csvReader = new BufferedReader(new FileReader("doctors.csv"));
+        String dir = System.getProperty("user.dir");
+        BufferedReader csvReader = new BufferedReader(new FileReader(dir + "/src/main/java/com/mycompany/midtermproject/doctors.csv"));
         String row;
         Scanner in;
         
@@ -82,6 +79,7 @@ public class Exposed {
             fname = in.next();
             lname = in.next();
             inHospital = sdf.parse(in.next());
+            // System.out.println(inHospital);
             mask = in.nextBoolean();
             gloves = in.nextBoolean();
             
@@ -129,7 +127,7 @@ public class Exposed {
             tired = in.nextBoolean();
             
             // Create Patient object.
-            inPatient = new Patient(lname, fname, dob, inHospital, 
+            inPatient = new Patient(lname, fname, inHospital, dob,
                                                         cough, fever, tired);
             // Add to ArrayList.
             patients.add(inPatient);
@@ -147,7 +145,6 @@ public class Exposed {
         for(int i=0; i<patients.size(); i++){
             rating = computePatientVirusRating(patients.get(i));
             patients.get(i).setvirusRating(rating);
-            // System.out.println(patients.get(i).getvirusRating());
         }
         return patients;
     }
@@ -158,7 +155,7 @@ public class Exposed {
         for(int i=0; i<doctors.size(); i++){
             rating = computeDoctorVirusRating(doctors.get(i), patients);
             doctors.get(i).setvirusRating(rating);
-            System.out.println(doctors.get(i).getvirusRating());
+            // System.out.println(doctors.get(i).getvirusRating());
         }
         return doctors;
     }
@@ -215,11 +212,21 @@ public class Exposed {
         // Higher risk if in hospital with patient that potentially has COVID-19.
         for(int i=0; i<patients.size(); i++){
             if(patients.get(i).getshiftInHospital().compareTo(doctor.getshiftInHospital())==0){
-                virusRating += patients.get(i).getvirusRating()/2;
+                virusRating += patients.get(i).getvirusRating();
             }
         }
 
         return virusRating;
     }
-  
+    
+    public static void toFile(ArrayList<Doctor> doctors) throws IOException{
+        String dir = System.getProperty("user.dir");
+        FileWriter w = new FileWriter(dir + "/src/main/java/com/mycompany/midtermproject/riskOfDoctors.csv");
+        w.append("Doctor Name,COVID-19 Risk Rating\n");
+        for(int i=0;i<doctors.size();i++){
+            w.append(doctors.get(i).toString() + "," + doctors.get(i).getvirusRating() + "\n");
+        }
+        w.flush();
+        w.close();
+    }
 }

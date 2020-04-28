@@ -32,4 +32,13 @@ public class Doctor extends Person{
     public boolean gethasMask(){
         return hasMask;
     }
+    
+    /**
+     *
+     * @return
+     */
+    @Override
+    public String toString(){
+        return "" + firstName + " " + lastName;
+    }
 }
